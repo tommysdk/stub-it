@@ -22,6 +22,7 @@ public class JpaEntityStubTest {
         assertThat(p.getCity(), notNullValue());
         assertThat(p.getState(), notNullValue());
         assertThat(p.getCountry(), notNullValue());
+        assertThat(p.getBornYear(), notNullValue());
 
         assertThat(p.getId(), nullValue());
         assertThat(p.getMiddleName(), nullValue());
@@ -29,4 +30,15 @@ public class JpaEntityStubTest {
         assertThat(p.getZipCode(), nullValue());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotBeAbleToStubInterfaceReturnType() {
+        JpaEntityWithInterfaceTypeProperty e = new JpaEntityWithInterfaceTypeProperty();
+        JpaEntityStub.withNullableFieldsFilledIn(e);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldRequireSetterForEachColumnAnnotatedPropertyGetter() {
+        JpaEntityWithNonMatchingGetterAndSetter e = new JpaEntityWithNonMatchingGetterAndSetter();
+        JpaEntityStub.withNullableFieldsFilledIn(e);
+    }
 }

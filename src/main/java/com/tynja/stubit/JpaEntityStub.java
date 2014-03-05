@@ -42,7 +42,10 @@ public class JpaEntityStub {
 
     private static <R> R provideValueForField(final Object subject, final String name, final Class<R> returnType) {
         if (!nullable(field(subject, name))) {
-            return newInstanceOf(returnType);
+            if (Default.valueAvailableForConstructorOf(returnType)) {
+                return Default.valueForClass(returnType);
+            }
+            else return newInstanceOf(returnType);
         } else return null;
     }
 
@@ -50,7 +53,7 @@ public class JpaEntityStub {
         try {
             return returnType.newInstance();
         } catch (Throwable e) {
-            throw new IllegalArgumentException("Could not create new instance of return type " + returnType.getClass(), e);
+            throw new IllegalArgumentException("Could not create new instance of return type " + returnType, e);
         }
     }
 
