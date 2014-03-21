@@ -36,7 +36,7 @@ public class StubTest {
         Person p = new Person();
         assertThat(p.getFirstName(), nullValue());
 
-        Stub.withProvidedValuesFor(p, nullableColumn());
+        Stub.withProvidedValuesFor(p, nonNullableColumn());
         assertThat(p.getFirstName(), notNullValue());
         assertThat(p.getSurname(), notNullValue());
         assertThat(p.getCity(), notNullValue());
@@ -53,16 +53,16 @@ public class StubTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToStubInterfaceReturnType() {
         JpaEntityWithInterfaceTypeProperty e = new JpaEntityWithInterfaceTypeProperty();
-        Stub.withProvidedValuesFor(e, nullableColumn());
+        Stub.withProvidedValuesFor(e, nonNullableColumn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRequireSetterForEachColumnAnnotatedPropertyGetter() {
         JpaEntityWithNonMatchingGetterAndSetter e = new JpaEntityWithNonMatchingGetterAndSetter();
-        Stub.withProvidedValuesFor(e, nullableColumn());
+        Stub.withProvidedValuesFor(e, nonNullableColumn());
     }
 
-    private Function<Field, Boolean> nullableColumn() {
+    private Function<Field, Boolean> nonNullableColumn() {
         return (field -> field.getAnnotation(Column.class) != null && !field.getAnnotation(Column.class).nullable());
     }
 }
