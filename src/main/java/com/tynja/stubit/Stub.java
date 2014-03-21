@@ -1,22 +1,25 @@
 package com.tynja.stubit;
 
-import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * @author Tommy Tynj&auml;
  */
-public class JpaEntityStub {
+public final class Stub {
 
-    public static Object withNullableFieldsFilledIn(final Object o) {
+    private Stub() {
+    }
+
+    public static <T> T withProvidedValuesFor(final T o, final Function<Field, Boolean> predicate) {
         try {
             for (Method m : o.getClass().getMethods()) {
                 if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
                     String qualifier = m.getName().replaceFirst("get", "");
                     try {
                         Method setter = o.getClass().getMethod("set" + qualifier, m.getReturnType());
-                        setter.invoke(o, provideValueForField(o, fieldCased(qualifier), m.getReturnType()));
+                        setter.invoke(o, provideValueForField(o, fieldCased(qualifier), m.getReturnType(), predicate));
                     } catch (NoSuchMethodException nsme) {
                         // getter without corresponding setter, e.g. getClass()
                     }
@@ -33,15 +36,8 @@ public class JpaEntityStub {
         else return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
-
-    private static boolean nullable(final Field field) {
-        if (field == null) return true;
-        Column column = field.getAnnotation(Column.class);
-        return column == null || column.nullable();
-    }
-
-    private static <R> R provideValueForField(final Object subject, final String name, final Class<R> returnType) {
-        if (!nullable(field(subject, name))) {
+    private static <R> R provideValueForField(final Object subject, final String name, final Class<R> returnType, final Function<Field, Boolean> predicate) {
+        if (predicate.apply(field(subject, name))) {
             if (Default.valueAvailableForConstructorOf(returnType)) {
                 return Default.valueForClass(returnType);
             }

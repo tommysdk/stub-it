@@ -2,6 +2,11 @@ package com.tynja.stubit;
 
 import org.junit.Test;
 
+import javax.persistence.Column;
+
+import java.lang.reflect.Field;
+import java.util.function.Function;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -9,14 +14,14 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Tommy Tynj&auml;
  */
-public class JpaEntityStubTest {
+public class StubTest {
 
     @Test
     public void shouldProvidedStubValuesForNonNullFields() {
         Person p = new Person();
         assertThat(p.getFirstName(), nullValue());
 
-        JpaEntityStub.withNullableFieldsFilledIn(p);
+        Stub.withProvidedValuesFor(p, nullableColumn());
         assertThat(p.getFirstName(), notNullValue());
         assertThat(p.getSurname(), notNullValue());
         assertThat(p.getCity(), notNullValue());
@@ -33,12 +38,16 @@ public class JpaEntityStubTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToStubInterfaceReturnType() {
         JpaEntityWithInterfaceTypeProperty e = new JpaEntityWithInterfaceTypeProperty();
-        JpaEntityStub.withNullableFieldsFilledIn(e);
+        Stub.withProvidedValuesFor(e, nullableColumn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRequireSetterForEachColumnAnnotatedPropertyGetter() {
         JpaEntityWithNonMatchingGetterAndSetter e = new JpaEntityWithNonMatchingGetterAndSetter();
-        JpaEntityStub.withNullableFieldsFilledIn(e);
+        Stub.withProvidedValuesFor(e, nullableColumn());
+    }
+
+    private Function<Field, Boolean> nullableColumn() {
+        return (field -> field.getAnnotation(Column.class) != null && !field.getAnnotation(Column.class).nullable());
     }
 }
