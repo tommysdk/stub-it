@@ -20,13 +20,36 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 
 /**
+ * The main class that allows stubbing of Java object fields through reflection.
+ * This class is not supposed to be instantiated. Calls should be made directly to the exposed static methods.
+ *
  * @author Tommy Tynj&auml;
+ * @see Default
  */
 public final class Stub {
 
     private Stub() {
     }
 
+    /**
+     * Will attempt to stub the fields on the specified object, that matches the given predicate function.
+     * Only fields that satisfies the following criterias can be stubbed:
+     * <ul>
+     *     <li>The field type is not an interface.</li>
+     *     <li>The field type provides a no-arg constructor, unless existent in the <tt>Default</tt> mapping.</li>
+     *     <li>The field has matching getter- and setter methods on the form.</li>
+     * </ul>
+     * <br/>
+     * If any exception occurs during stubbing, an <tt>IllegalArgumentException</tt> will be thrown.
+     *
+     * @param o the object to stub.
+     * @param predicate the function that dictates whether a field on the specified object is subject for
+     *                  stubbing. The function have to take a field as a parameter and return true for each
+     *                  field that should be stubbed.
+     * @param <T> the object type.
+     * @return the specified object itself, with default values provided for each field that matches the
+     *                  specified predicate function.
+     */
     public static <T> T withProvidedValuesFor(final T o, final Function<Field, Boolean> predicate) {
         try {
             for (Method m : o.getClass().getMethods()) {

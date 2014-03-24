@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Provides default values for a certain set of predefined classes,
+ * e.g. primitive types, as these lacks a no-arg constructor.
+ *
  * @author Tommy Tynj&auml;
  */
 public class Default<T> {
@@ -36,10 +39,25 @@ public class Default<T> {
         MAPPINGS.put(BigDecimal.class, new BigDecimal(0));
     }
 
+    /**
+     * Checks whether there is a provided default value for the specified class.
+     *
+     * @param cls the class to compare against available default values.
+     * @return true if a default value can be provided for the specified class.
+     */
     public static boolean valueAvailableForConstructorOf(final Class cls) {
         return MAPPINGS.containsKey(cls);
     }
 
+    /**
+     * Get a default value for the specified class, if such is provided by this implementation.
+     * This method will only provide a value in return if the <tt>valueAvailableForConstructorOf</tt>
+     * method returns true.
+     *
+     * @param cls the class to get a default value for.
+     * @param <T> the class type.
+     * @return a default value for the specified class, if such can be provided.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T valueForClass(final Class<T> cls) {
         return (T) MAPPINGS.get(cls);
