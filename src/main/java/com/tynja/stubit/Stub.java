@@ -39,7 +39,6 @@ public final class Stub {
      *     <li>The field type provides a no-arg constructor, unless existent in the <tt>Default</tt> mapping.</li>
      *     <li>The field has matching getter- and setter methods on the form.</li>
      * </ul>
-     * <br/>
      * If any exception occurs during stubbing, an <tt>IllegalArgumentException</tt> will be thrown.
      *
      * @param o the object to stub.
