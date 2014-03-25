@@ -22,6 +22,8 @@ Stub.withProvidedValuesFor(person, nonNullableColumns);
 
 The project has no compile or runtime dependencies so you don't need to worry about Stub-it bringing in any other libraries than itself.<br/>
 
+You can find the binaries for the released 0.1 version at: https://github.com/tommysdk/tommysdk.github.io/tree/master/binaries/com/tynja/test/stub-it/0.1.
+
 The project is licensed under Apache License Version 2.0.<br/>
 
 Happy stubbing!
