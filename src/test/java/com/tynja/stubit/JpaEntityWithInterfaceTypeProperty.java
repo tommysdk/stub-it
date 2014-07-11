@@ -20,7 +20,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.List;
 
 /**
  * @author Tommy Tynj&auml;
@@ -33,7 +32,7 @@ public class JpaEntityWithInterfaceTypeProperty {
     private Long id;
 
     @Column(nullable = false)
-    private List relations;
+    private ArbitraryInterface relations;
 
     public Long getId() {
         return id;
@@ -43,11 +42,11 @@ public class JpaEntityWithInterfaceTypeProperty {
         this.id = id;
     }
 
-    public List getRelations() {
+    public ArbitraryInterface getRelations() {
         return relations;
     }
 
-    public void setRelations(final List relations) {
+    public void setRelations(final ArbitraryInterface relations) {
         this.relations = relations;
     }
 }

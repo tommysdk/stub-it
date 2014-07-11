@@ -17,12 +17,31 @@ package com.tynja.stubit;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TransferQueue;
 
 /**
  * Provides default values for a certain set of predefined classes,
- * e.g. primitive types, as these lacks a no-arg constructor.
+ * e.g. primitive types (as these lacks a no-arg constructor) and
+ * collection interfaces (as these are a common subject for stubbing).
  *
  * @author Tommy Tynj&auml;
  */
@@ -37,6 +56,17 @@ public class Default<T> {
         MAPPINGS.put(Float.class, 0.0F);
         MAPPINGS.put(BigInteger.class, new BigInteger("0"));
         MAPPINGS.put(BigDecimal.class, new BigDecimal(0));
+        MAPPINGS.put(Collection.class, new ArrayList());
+        MAPPINGS.put(List.class, new ArrayList());
+        MAPPINGS.put(Set.class, new HashSet());
+        MAPPINGS.put(SortedSet.class, new TreeSet());
+        MAPPINGS.put(BlockingDeque.class, new LinkedBlockingDeque());
+        MAPPINGS.put(BlockingQueue.class, new LinkedBlockingQueue());
+        MAPPINGS.put(Deque.class, new ArrayDeque());
+        MAPPINGS.put(Queue.class, new LinkedList());
+        MAPPINGS.put(NavigableSet.class, new TreeSet());
+        MAPPINGS.put(TransferQueue.class, new LinkedTransferQueue());
+        MAPPINGS.put(Iterable.class, new ArrayList());
     }
 
     /**

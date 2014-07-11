@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.util.function.Function;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -50,8 +51,36 @@ public class StubTest {
         assertThat(p.getZipCode(), nullValue());
     }
 
+    @Test
+    public void shouldProvideStubValuesForCollectionTypeFields() {
+        JpaEntityWithCollectionsInterfaces e = new JpaEntityWithCollectionsInterfaces();
+        Stub.withProvidedValuesFor(e, nonNullableColumn());
+        assertThat(e.getCollection(), notNullValue());
+        assertThat(e.getList(), notNullValue());
+        assertThat(e.getSet(), notNullValue());
+        assertThat(e.getSortedSet(), notNullValue());
+        assertThat(e.getBlockingDeque(), notNullValue());
+        assertThat(e.getBlockingQueue(), notNullValue());
+        assertThat(e.getDeque(), notNullValue());
+        assertThat(e.getQueue(), notNullValue());
+        assertThat(e.getNavigableSet(), notNullValue());
+        assertThat(e.getTransferQueue(), notNullValue());
+        assertThat(e.getIterable(), notNullValue());
+        assertThat(e.getCollection().isEmpty(), is(true));
+        assertThat(e.getList().isEmpty(), is(true));
+        assertThat(e.getSet().isEmpty(), is(true));
+        assertThat(e.getSortedSet().isEmpty(), is(true));
+        assertThat(e.getBlockingDeque().isEmpty(), is(true));
+        assertThat(e.getBlockingQueue().isEmpty(), is(true));
+        assertThat(e.getDeque().isEmpty(), is(true));
+        assertThat(e.getQueue().isEmpty(), is(true));
+        assertThat(e.getNavigableSet().isEmpty(), is(true));
+        assertThat(e.getTransferQueue().isEmpty(), is(true));
+        assertThat(e.getIterable().iterator().hasNext(), is(false));
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotBeAbleToStubInterfaceReturnType() {
+    public void shouldNotBeAbleToStubArbitraryInterfaceReturnType() {
         JpaEntityWithInterfaceTypeProperty e = new JpaEntityWithInterfaceTypeProperty();
         Stub.withProvidedValuesFor(e, nonNullableColumn());
     }
