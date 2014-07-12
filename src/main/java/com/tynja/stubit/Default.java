@@ -45,7 +45,7 @@ import java.util.concurrent.TransferQueue;
  *
  * @author Tommy Tynj&auml;
  */
-public class Default<T> {
+public class Default {
 
     private static final Map<Class, Object> MAPPINGS;
     static {
