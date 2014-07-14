@@ -143,8 +143,8 @@
         <connection>scm:git://github.com/tommysdk/stub-it.git</connection>
         <developerConnection>scm:git:https://github.com/tommysdk/stub-it.git</developerConnection>
         <url>https://github.com/tommysdk/stub-it/tree/master/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
