@@ -45,7 +45,7 @@ import java.util.concurrent.TransferQueue;
  *
  * @author Tommy Tynj&auml;
  */
-public class Default {
+public class DefaultValues implements Values {
 
     private static final Map<Class, Object> MAPPINGS;
     static {
@@ -69,13 +69,18 @@ public class Default {
         MAPPINGS.put(Iterable.class, new ArrayList());
     }
 
+    static final DefaultValues instance = new DefaultValues();
+
+    private DefaultValues() {
+    }
+
     /**
      * Checks whether there is a provided default value for the specified class.
      *
      * @param cls the class to compare against available default values.
      * @return true if a default value can be provided for the specified class.
      */
-    public static boolean valueAvailableForConstructorOf(final Class cls) {
+    public boolean valueAvailableForConstructorOf(final Class cls) {
         return MAPPINGS.containsKey(cls);
     }
 
@@ -89,7 +94,7 @@ public class Default {
      * @return a default value for the specified class, if such can be provided.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T valueForClass(final Class<T> cls) {
+    public <T> T valueForClass(final Class<T> cls) {
         return (T) MAPPINGS.get(cls);
     }
 }

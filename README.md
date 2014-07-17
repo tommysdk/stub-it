@@ -17,7 +17,7 @@ PersonJpaEntity person = new PersonJpaEntity();
 Function<Field, Boolean> nonNullableColumns = 
         (field -> field.getAnnotation(Column.class) != null 
                 && !field.getAnnotation(Column.class).nullable());
-Stub.withProvidedValuesFor(person, nonNullableColumns);
+Stub.withValuesProvidedFor(person, nonNullableColumns);
 ```
 
 The project has no compile or runtime dependencies so you don't need to worry about Stub-it bringing in any other libraries than itself.<br/>

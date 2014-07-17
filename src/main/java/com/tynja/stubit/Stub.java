@@ -24,20 +24,26 @@ import java.util.function.Function;
  * This class is not supposed to be instantiated. Calls should be made directly to the exposed static methods.
  *
  * @author Tommy Tynj&auml;
- * @see Default
+ * @see DefaultValues
  */
 public final class Stub {
 
     private Stub() {
     }
 
+    public static <T> Definition<T> with(final Values values) {
+        return new Definition<>(values);
+    }
+
     /**
      * Will attempt to stub the fields on the specified object, that matches the given predicate function.
-     * Only fields that satisfies the following criterias can be stubbed:
+     * Only fields that satisfies the following criterion's can be stubbed:
      * <ul>
-     *     <li>The field type is not an interface.</li>
-     *     <li>The field type provides a no-arg constructor, unless existent in the <tt>Default</tt> mapping.</li>
-     *     <li>The field has matching getter- and setter methods on the form.</li>
+     *     <li>The field type is not an interface, unless a java.util.Collection or any known sub-interface
+     *         according to the official JDK documentation.</li>
+     *     <li>The field type provides a no-arg constructor, unless existent in the <tt>DefaultValues</tt>
+     *         mapping.</li>
+     *     <li>The field has matching getter- and setter methods.</li>
      * </ul>
      * If any exception occurs during stubbing, an <tt>IllegalArgumentException</tt> will be thrown.
      *
@@ -49,14 +55,18 @@ public final class Stub {
      * @return the specified object itself, with default values provided for each field that matches the
      *                  specified predicate function.
      */
-    public static <T> T withProvidedValuesFor(final T o, final Function<Field, Boolean> predicate) {
+    public static <T> T withValuesProvidedFor(final T o, final Function<Field, Boolean> predicate) {
+        return withValuesProvidedFor(o, predicate, DefaultValues.instance);
+    }
+
+    private static <T> T withValuesProvidedFor(final T o, final Function<Field, Boolean> predicate, final Values values) {
         try {
             for (Method m : o.getClass().getMethods()) {
                 if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
                     String qualifier = m.getName().replaceFirst("get", "");
                     try {
                         Method setter = o.getClass().getMethod("set" + qualifier, m.getReturnType());
-                        setter.invoke(o, provideValueForField(o, fieldCased(qualifier), m.getReturnType(), predicate));
+                        setter.invoke(o, provideValueForField(o, fieldCased(qualifier), m.getReturnType(), predicate, values));
                     } catch (NoSuchMethodException nsme) {
                         // getter without corresponding setter, e.g. getClass()
                     }
@@ -73,10 +83,10 @@ public final class Stub {
         else return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
-    private static <R> R provideValueForField(final Object subject, final String name, final Class<R> returnType, final Function<Field, Boolean> predicate) {
+    private static <R> R provideValueForField(final Object subject, final String name, final Class<R> returnType, final Function<Field, Boolean> predicate, final Values defaults) {
         if (predicate.apply(field(subject, name))) {
-            if (Default.valueAvailableForConstructorOf(returnType)) {
-                return Default.valueForClass(returnType);
+            if (defaults.valueAvailableForConstructorOf(returnType)) {
+                return defaults.valueForClass(returnType);
             }
             else return newInstanceOf(returnType);
         } else return null;
@@ -95,6 +105,21 @@ public final class Stub {
             return subject.getClass().getDeclaredField(name);
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("Could not resolve field '" + name + "' for " + subject, e);
+        }
+    }
+
+    public static class Definition<T> {
+        public final Values values;
+
+        private Definition(final Values values) {
+            if (values == null) {
+                throw new IllegalArgumentException("Expected values to use for stubbing but received null. Use the Stub.withValuesProvidedFor method to let stub-it provide default values for you.");
+            }
+            this.values = values;
+        }
+
+        public T providedFor(final T subject, final Function<Field, Boolean> predicate) {
+            return Stub.withValuesProvidedFor(subject, predicate, values);
         }
     }
 }

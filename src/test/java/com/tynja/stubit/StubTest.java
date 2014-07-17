@@ -20,6 +20,8 @@ import org.junit.Test;
 import javax.persistence.Column;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -37,7 +39,7 @@ public class StubTest {
         Person p = new Person();
         assertThat(p.getFirstName(), nullValue());
 
-        Stub.withProvidedValuesFor(p, nonNullableColumn());
+        Stub.withValuesProvidedFor(p, nonNullableColumn());
         assertThat(p.getFirstName(), notNullValue());
         assertThat(p.getSurname(), notNullValue());
         assertThat(p.getCity(), notNullValue());
@@ -54,7 +56,7 @@ public class StubTest {
     @Test
     public void shouldProvideStubValuesForCollectionTypeFields() {
         JpaEntityWithCollectionsInterfaces e = new JpaEntityWithCollectionsInterfaces();
-        Stub.withProvidedValuesFor(e, nonNullableColumn());
+        Stub.withValuesProvidedFor(e, nonNullableColumn());
         assertThat(e.getCollection(), notNullValue());
         assertThat(e.getList(), notNullValue());
         assertThat(e.getSet(), notNullValue());
@@ -82,13 +84,43 @@ public class StubTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToStubArbitraryInterfaceReturnType() {
         JpaEntityWithInterfaceTypeProperty e = new JpaEntityWithInterfaceTypeProperty();
-        Stub.withProvidedValuesFor(e, nonNullableColumn());
+        Stub.withValuesProvidedFor(e, nonNullableColumn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRequireSetterForEachColumnAnnotatedPropertyGetter() {
         JpaEntityWithNonMatchingGetterAndSetter e = new JpaEntityWithNonMatchingGetterAndSetter();
-        Stub.withProvidedValuesFor(e, nonNullableColumn());
+        Stub.withValuesProvidedFor(e, nonNullableColumn());
+    }
+
+    @Test
+    public void shouldBeAbleToUseUserProvidedValuesForStubbedFields() {
+        final String expectedMapValue = "user-specified-value";
+        ObjectWithMapProperty subject = new ObjectWithMapProperty();
+        Values userDefinedValues = new Values() {
+            @Override
+            public boolean valueAvailableForConstructorOf(final Class cls) {
+                return Map.class.equals(cls);
+            }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T valueForClass(final Class<T> cls) {
+                if (valueAvailableForConstructorOf(cls)) {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("user-specified-key", expectedMapValue);
+                    return (T) map;
+                } else {
+                    return null;
+                }
+            }
+        };
+        Stub.with(userDefinedValues).providedFor(subject, field -> field.getType().equals(Map.class));
+        assertThat(subject, notNullValue());
+        assertThat(userDefinedValues.valueForClass(Map.class), notNullValue());
+        assertThat(subject.getMapping(), notNullValue());
+        assertThat(subject.getMapping().isEmpty(), is(false));
+        assertThat(subject.getMapping().size(), is(1));
+        assertThat(subject.getMapping().values().iterator().next(), is(expectedMapValue));
     }
 
     private Function<Field, Boolean> nonNullableColumn() {
