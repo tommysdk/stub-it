@@ -31,6 +31,15 @@ public final class Stub {
     private Stub() {
     }
 
+    /**
+     * Will create a stub definition, where the specified <tt>Values</tt> implementation will be used to
+     * provide values for the stubbed fields. The actual stubbing is performed when the <tt>providedFor</tt>
+     * method is called on the returned stub definition.
+     *
+     * @param values the values to use for this stubbing.
+     * @param <T> the object type.
+     * @return a stub definition
+     */
     public static <T> Definition<T> with(final Values values) {
         return new Definition<>(values);
     }
@@ -108,6 +117,12 @@ public final class Stub {
         }
     }
 
+    /**
+     * A stub definition, which allows a user to stub certain fields on a certain object using a custom
+     * <tt>Values</tt> implementation which will provide values for the fields subject to stubbing.
+     *
+     * @param <T> the object type.
+     */
     public static class Definition<T> {
         public final Values values;
 
@@ -118,6 +133,22 @@ public final class Stub {
             this.values = values;
         }
 
+        /**
+         * Will attempt to stub the fields on the specified object, that matches the given predicate function.
+         * Will only be able to stub fields that are supported by the previously defined <tt>Values</tt>
+         * implementation for this stub definition.<br/>
+         * <br/>
+         * Every field subject for stubbing is required to have a matching getter- and setter method.<br/>
+         * <br/>
+         * If any exception occurs during stubbing, an <tt>IllegalArgumentException</tt> will be thrown.
+         *
+         * @param subject the object to stub.
+         * @param predicate the function that dictates whether a field on the specified object is subject for
+         *                  stubbing. The function have to take a field as a parameter and return true for each
+         *                  field that should be stubbed.
+         * @return the specified object itself, with the previously defined values provided for each field that
+         *                  matches the specified predicate function.
+         */
         public T providedFor(final T subject, final Function<Field, Boolean> predicate) {
             return Stub.withValuesProvidedFor(subject, predicate, values);
         }
