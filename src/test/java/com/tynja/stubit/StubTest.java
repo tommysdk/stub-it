@@ -123,6 +123,12 @@ public class StubTest {
         assertThat(subject.getMapping().values().iterator().next(), is(expectedMapValue));
     }
 
+    @Test
+    public void shouldBeAbleToStubPrimitiveTypedFields() {
+        JpaEntityWithPrimitiveProperties e = new JpaEntityWithPrimitiveProperties();
+        Stub.withValuesProvidedFor(e, field -> true);
+    }
+
     private Function<Field, Boolean> nonNullableColumn() {
         return (field -> field.getAnnotation(Column.class) != null && !field.getAnnotation(Column.class).nullable());
     }

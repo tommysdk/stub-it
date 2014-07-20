@@ -40,7 +40,7 @@ import java.util.concurrent.TransferQueue;
 
 /**
  * Provides default values for a certain set of predefined classes,
- * e.g. primitive types (as these lacks a no-arg constructor) and
+ * e.g. primitive types and their object representations as well as
  * collection interfaces (as these are a common subject for stubbing).
  *
  * @author Tommy Tynj&auml;
@@ -50,10 +50,22 @@ public class DefaultValues implements Values {
     private static final Map<Class, Object> MAPPINGS;
     static {
         MAPPINGS = new HashMap<>();
+        MAPPINGS.put(int.class, 0);
+        MAPPINGS.put(long.class, 0L);
+        MAPPINGS.put(double.class, 0.0D);
+        MAPPINGS.put(float.class, 0.0F);
+        MAPPINGS.put(boolean.class, false);
+        MAPPINGS.put(short.class, (short) 0);
+        MAPPINGS.put(byte.class, (byte) 0);
+        MAPPINGS.put(char.class, (char) 65);
         MAPPINGS.put(Integer.class, 0);
         MAPPINGS.put(Long.class, 0L);
-        MAPPINGS.put(Double.class, 0.0);
+        MAPPINGS.put(Double.class, 0.0D);
         MAPPINGS.put(Float.class, 0.0F);
+        MAPPINGS.put(Boolean.class, false);
+        MAPPINGS.put(Short.class, (short) 0);
+        MAPPINGS.put(Byte.class, (byte) 0);
+        MAPPINGS.put(Character.class, (char) 65);
         MAPPINGS.put(BigInteger.class, new BigInteger("0"));
         MAPPINGS.put(BigDecimal.class, new BigDecimal(0));
         MAPPINGS.put(Collection.class, new ArrayList());
