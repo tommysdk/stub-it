@@ -136,10 +136,10 @@ public final class Stub {
         /**
          * Will attempt to stub the fields on the specified object, that matches the given predicate function.
          * Will only be able to stub fields that are supported by the previously defined <tt>Values</tt>
-         * implementation for this stub definition.<br/>
-         * <br/>
-         * Every field subject for stubbing is required to have a matching getter- and setter method.<br/>
-         * <br/>
+         * implementation for this stub definition.
+         *
+         * Every field subject for stubbing is required to have a matching getter- and setter method.
+         *
          * If any exception occurs during stubbing, an <tt>IllegalArgumentException</tt> will be thrown.
          *
          * @param subject the object to stub.
